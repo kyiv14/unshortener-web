@@ -15,9 +15,14 @@
             background-color: #ffffff;
             color: #1d1d1f;
             -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Центрирование по вертикали */
+            align-items: center;    /* Центрирование по горизонтали */
+            min-height: 100vh;
+            margin: 0;
         }
 
-        /* Стили логотипа */
         .logo-text {
             font-size: 32px;
             font-weight: 900;
@@ -25,16 +30,16 @@
             align-items: center;
             gap: 12px;
             justify-content: center;
+            margin-bottom: 40px; /* Отступ логотипа от контента */
         }
         .logo-text span { color: #de2624; }
         .logo-icon { color: #de2624; font-size: 32px; }
 
-        /* Заголовки */
         .hero-title {
-            font-size: 48px;
+            font-size: 40.8px; /* Уменьшено на 15% (было 48px) */
             font-weight: 900;
             line-height: 1.1;
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* Уменьшен отступ */
             text-align: center;
             letter-spacing: -1px;
         }
@@ -45,17 +50,17 @@
             font-size: 19px;
             text-align: center;
             max-width: 500px;
-            margin: 0 auto 45px;
+            margin: 0 auto 25px; /* Уменьшен отступ до карточки (было 45px) */
             font-weight: 500;
         }
 
-        /* Основная карточка ввода */
         .main-card {
             background: #fbfbfd;
             border-radius: 45px;
-            padding: 50px 30px;
+            padding: 40px 30px; /* Слегка уменьшен внутренний вертикальный отступ */
             box-shadow: 0 25px 50px rgba(0,0,0,0.04);
             border: 1px solid rgba(0,0,0,0.02);
+            width: 100%;
         }
 
         .input-field {
@@ -76,7 +81,6 @@
             box-shadow: 0 0 0 4px rgba(29, 29, 31, 0.05);
         }
 
-        /* Кнопка действия */
         .btn-black {
             background: #1d1d1f;
             color: #ffffff;
@@ -98,15 +102,9 @@
             transform: translateY(-3px); 
             box-shadow: 0 15px 30px rgba(0,0,0,0.15); 
         }
-        .btn-black:disabled {
-            background: #86868b;
-            cursor: not-allowed;
-            transform: none;
-        }
 
-        /* Стили для результатов */
         .result-card {
-            margin-top: 35px;
+            margin-top: 30px;
             padding: 30px;
             background: #ffffff;
             border-radius: 30px;
@@ -135,14 +133,15 @@
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen items-center px-6 py-12 md:py-20">
+<body>
 
-    <div class="logo-text mb-16 md:mb-24">
-        <i class="fas fa-shield-alt logo-icon"></i>
-        Link <span>Unmask</span>
-    </div>
+    <div class="max-w-lg w-full px-6">
+        
+        <div class="logo-text">
+            <i class="fas fa-shield-alt logo-icon"></i>
+            Link <span>Unmask</span>
+        </div>
 
-    <div class="max-w-lg w-full">
         <h1 class="hero-title">Раскрой <span>тайну</span> ссылки</h1>
         <p class="hero-sub">Безопасный просмотр сокращенных URL без риска для данных</p>
 
@@ -170,8 +169,7 @@
             
             <div class="pt-5 border-t border-slate-100">
                 <p class="text-[10px] font-bold text-slate-400 uppercase mb-4 tracking-widest">Цепочка переходов:</p>
-                <div id="redirectChain" class="space-y-1">
-                    </div>
+                <div id="redirectChain" class="space-y-1"></div>
             </div>
         </div>
     </div>
@@ -187,7 +185,6 @@
             const rawUrl = input.value.trim();
             if (!rawUrl) return;
 
-            // Визуальное состояние загрузки
             btn.disabled = true;
             btnText.innerText = "Раскрываем...";
             loader.classList.remove('hidden');
@@ -203,12 +200,10 @@
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    // Наполнение данными
                     document.getElementById('siteTitle').innerText = data.metadata.title || "Заголовок не найден";
                     document.getElementById('finalUrl').innerText = data.final_url;
                     document.getElementById('finalUrl').href = data.final_url;
                     
-                    // Построение цепочки
                     const chainBox = document.getElementById('redirectChain');
                     chainBox.innerHTML = '';
                     data.chain.forEach((link) => {
@@ -227,7 +222,6 @@
                 }
             } catch (e) {
                 alert("Ошибка соединения с сервером");
-                console.error(e);
             } finally {
                 btn.disabled = false;
                 btnText.innerText = "Раскрыть сейчас";
