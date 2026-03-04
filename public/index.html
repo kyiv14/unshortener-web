@@ -3,185 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unshorten.it — Честная проверка ссылок</title>
+    <title>Link Unmask — Раскрой тайну ссылки</title>
     
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔗</text></svg>">
-
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        :root {
-            --primary: #3b82f6; /* Синий акцент вместо красного */
-            --bg-dark: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-        }
-
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: var(--bg-dark);
-            color: #f1f5f9;
-            overflow-x: hidden;
+            background-color: #ffffff;
+            color: #1d1d1f;
         }
 
-        /* Анимированный фон как в примере */
-        .bg-glow {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% -20%, #1e3a8a 0%, transparent 50%);
-            z-index: -1;
+        .logo-text {
+            font-size: 32px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+        .logo-text span { color: #de2624; }
+        .logo-icon { color: #de2624; font-size: 28px; }
+
+        .hero-title {
+            font-size: 42px;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .hero-title span { color: #de2624; }
+
+        .hero-sub {
+            color: #86868b;
+            font-size: 18px;
+            text-align: center;
+            max-width: 450px;
+            margin: 0 auto 40px;
         }
 
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
+        .main-card {
+            background: #fbfbfd;
+            border-radius: 40px;
+            padding: 40px 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.02);
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), #2563eb);
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-            transition: all 0.3s ease;
+        .input-field {
+            width: 100%;
+            padding: 20px 25px;
+            border-radius: 20px;
+            border: 1px solid #e5e5e5;
+            font-size: 16px;
+            font-weight: 500;
+            outline: none;
+            transition: 0.3s;
+            background: #ffffff;
+            margin-bottom: 15px;
         }
+        .input-field:focus { border-color: #1d1d1f; }
 
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        .btn-black {
+            background: #1d1d1f;
+            color: #ffffff;
+            width: 100%;
+            padding: 20px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 18px;
+            transition: 0.3s;
+            margin-bottom: 15px;
         }
+        .btn-black:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
-        .redirect-step::before {
-            content: '';
-            position: absolute;
-            left: 15px;
-            top: 24px;
-            bottom: -12px;
-            width: 2px;
-            background: rgba(255, 255, 255, 0.1);
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #e5e5e5;
+            color: #1d1d1f;
+            width: 100%;
+            padding: 15px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.2s;
         }
+        .btn-outline:hover { background: #f5f5f7; }
 
-        .redirect-step:last-child::before { display: none; }
-
-        .fade-in { animation: fadeIn 0.5s ease forward; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Результаты */
+        .result-card {
+            margin-top: 30px;
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 25px;
+            border: 2px solid #de2624;
+            display: none;
+        }
+        .redirect-dot { width: 10px; height: 10px; background: #de2624; border-radius: 50%; }
     </style>
 </head>
-<body>
-    <div class="bg-glow"></div>
+<body class="flex flex-col min-h-screen items-center px-5 py-10">
 
-    <div class="max-w-2xl mx-auto px-4 py-12">
-        <header class="text-center mb-12">
-            <div class="inline-block p-4 bg-blue-500/10 rounded-full mb-4">
-                <i class="fas fa-link text-4xl text-blue-400"></i>
-            </div>
-            <h1 class="text-4xl font-extrabold tracking-tight mb-2">Unshorten<span class="text-blue-500">.it</span></h1>
-            <p class="text-slate-400 font-medium">Безопасная проверка сокращенных ссылок</p>
-        </header>
+    <div class="logo-text mb-20">
+        <i class="fas fa-shield-alt logo-icon"></i>
+        Link <span>Unmask</span>
+    </div>
 
-        <main class="glass-card p-6 md:p-8 shadow-2xl mb-8">
-            <div class="space-y-4">
-                <div class="relative">
-                    <input id="urlInput" type="text" 
-                           placeholder="Вставьте ссылку (bit.ly, t.co, tinyurl...)" 
-                           class="w-full bg-slate-900/50 border border-slate-700 p-4 pl-12 rounded-2xl outline-none focus:border-blue-500 transition-all text-lg">
-                    <i class="fas fa-search absolute left-4 top-5 text-slate-500"></i>
-                </div>
-                
-                <button onclick="unshorten()" id="btn" 
-                        class="btn-primary w-full p-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 transition-all">
-                    <span>РАСШИФРОВАТЬ</span>
-                    <i class="fas fa-shield-halved"></i>
-                </button>
-            </div>
-        </main>
+    <div class="max-w-lg w-full">
+        <h1 class="hero-title">Раскрой <span>тайну</span> ссылки</h1>
+        <p class="hero-sub">Безопасный просмотр сокращенных URL и QR-кодов</p>
 
-        <div id="loader" class="hidden py-10 text-center">
-            <div class="inline-block w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-            <p class="mt-4 text-slate-400 font-semibold uppercase tracking-widest text-xs">Анализ безопасности...</p>
+        <div class="main-card">
+            <input id="urlInput" type="text" placeholder="Вставьте ссылку (bit.ly, t.co...)" class="input-field">
+            
+            <button onclick="unshorten()" id="btn" class="btn-black flex items-center justify-center gap-3">
+                <span id="btnText">Раскрыть сейчас</span>
+                <i id="loader" class="fas fa-spinner fa-spin hidden"></i>
+            </button>
+
+            <button class="btn-outline">
+                <i class="fas fa-camera"></i>
+                Сканировать QR с камеры
+            </button>
         </div>
 
-        <div id="result" class="hidden space-y-6">
-            <div class="glass-card p-6 border-l-4 border-l-blue-500 fade-in">
-                <div class="flex items-center gap-4 mb-4">
-                    <img id="siteIcon" src="" alt="" class="w-12 h-12 rounded-xl bg-slate-800 p-1 shadow-inner">
-                    <div class="overflow-hidden">
-                        <h2 id="siteTitle" class="text-xl font-bold truncate"></h2>
-                        <p id="siteDesc" class="text-sm text-slate-400 line-clamp-1"></p>
-                    </div>
-                </div>
-                
-                <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700/50">
-                    <label class="text-[10px] font-bold text-blue-500 uppercase tracking-widest block mb-1">Финальный адрес</label>
-                    <a id="finalUrl" href="#" target="_blank" class="text-blue-400 break-all font-semibold hover:underline"></a>
-                </div>
-            </div>
-
-            <div class="glass-card p-6 fade-in" style="animation-delay: 0.1s;">
-                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                    <i class="fas fa-route"></i> Цепочка переходов
-                </h3>
-                <div id="redirectChain" class="space-y-6">
-                    </div>
+        <div id="result" class="result-card">
+            <h3 class="text-xs font-bold uppercase tracking-widest text-red-600 mb-2">Найдена цель:</h3>
+            <p id="siteTitle" class="text-xl font-extrabold mb-1"></p>
+            <a id="finalUrl" href="#" target="_blank" class="text-blue-500 break-all text-sm font-semibold underline"></a>
+            
+            <div class="mt-4 pt-4 border-t border-gray-100">
+                <p class="text-[10px] font-bold text-gray-400 uppercase mb-3">Путь ссылки:</p>
+                <div id="redirectChain" class="space-y-2"></div>
             </div>
         </div>
     </div>
 
     <script>
         async function unshorten() {
-            const urlInput = document.getElementById('urlInput');
-            const btn = document.getElementById('btn');
+            const input = document.getElementById('urlInput');
+            const btnText = document.getElementById('btnText');
             const loader = document.getElementById('loader');
-            const resultDiv = document.getElementById('result');
+            const result = document.getElementById('result');
             
-            if (!urlInput.value) return;
+            if (!input.value) return;
 
-            btn.disabled = true;
-            btn.style.opacity = '0.7';
+            btnText.innerText = "Раскрываем...";
             loader.classList.remove('hidden');
-            resultDiv.classList.add('hidden');
-            document.getElementById('redirectChain').innerHTML = '';
+            result.style.display = 'none';
 
             try {
                 const response = await fetch('/api/unshorten', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url: urlInput.value })
+                    body: JSON.stringify({ url: input.value })
                 });
-
                 const data = await response.json();
 
                 if (data.status === 'success') {
+                    document.getElementById('siteTitle').innerText = data.metadata.title;
                     document.getElementById('finalUrl').innerText = data.final_url;
                     document.getElementById('finalUrl').href = data.final_url;
-                    document.getElementById('siteTitle').innerText = data.metadata.title;
-                    document.getElementById('siteDesc').innerText = data.metadata.description;
-                    document.getElementById('siteIcon').src = data.metadata.favicon;
-
-                    // Building the chain
-                    data.chain.forEach((link, index) => {
-                        const isLast = index === data.chain.length - 1;
-                        const step = document.createElement('div');
-                        step.className = "redirect-step relative pl-10 flex flex-col";
-                        step.innerHTML = `
-                            <div class="absolute left-0 top-1 w-8 h-8 rounded-full flex items-center justify-center z-10 ${isLast ? 'bg-green-500/20 text-green-400' : 'bg-blue-500/20 text-blue-400'}">
-                                <i class="fas ${isLast ? 'fa-check-circle' : 'fa-circle-dot'} text-xs"></i>
+                    
+                    const chainBox = document.getElementById('redirectChain');
+                    chainBox.innerHTML = '';
+                    data.chain.forEach((link, i) => {
+                        chainBox.innerHTML += `
+                            <div class="flex items-center gap-3 text-[11px] font-bold text-gray-500">
+                                <div class="redirect-dot"></div>
+                                <span class="truncate">${link}</span>
                             </div>
-                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter mb-1">Шаг ${index + 1}</span>
-                            <span class="text-sm truncate font-medium ${isLast ? 'text-green-400' : 'text-slate-300'}">${link}</span>
                         `;
-                        document.getElementById('redirectChain').appendChild(step);
                     });
 
-                    resultDiv.classList.remove('hidden');
+                    result.style.display = 'block';
                 } else {
-                    alert('Ошибка: ' + (data.message || 'Не удалось проверить ссылку'));
+                    alert("Ошибка: " + data.message);
                 }
-            } catch (error) {
-                alert('Проблема с подключением к серверу');
+            } catch (e) {
+                alert("Ошибка сервера");
             } finally {
-                btn.disabled = false;
-                btn.style.opacity = '1';
+                btnText.innerText = "Раскрыть сейчас";
                 loader.classList.add('hidden');
             }
         }
