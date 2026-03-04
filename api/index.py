@@ -6,27 +6,26 @@ from urllib.parse import urljoin, urlparse
 app = Flask(__name__)
 
 def get_metadata(response):
-    """Извлекает заголовок, описание и иконку (favicon) финального сайта"""
+    """Извлекает заголовок, описание и иконку (favicon) сайта"""
     try:
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        # 1. Заголовок сайта
+        # 1. Заголовок
         title = soup.title.string if soup.title else "Заголовок не найден"
         
-        # 2. Описание сайта (из мета-тегов)
+        # 2. Описание
         description = "Описание не найдено"
         meta_desc = soup.find("meta", attrs={"name": "description"}) or \
                     soup.find("meta", attrs={"property": "og:description"})
         if meta_desc:
             description = meta_desc.get("content", description)
 
-        # 3. Фавиконка (иконка сайта)
+        # 3. Фавиконка
         favicon = ""
         icon_link = soup.find("link", rel=lambda x: x and 'icon' in x.lower())
         if icon_link:
             favicon = urljoin(response.url, icon_link.get("href"))
         else:
-            # Если тег не найден, пробуем стандартный путь
             parsed_uri = urlparse(response.url)
             favicon = f"{parsed_uri.scheme}://{parsed_uri.netloc}/favicon.ico"
 
@@ -40,32 +39,30 @@ def get_metadata(response):
 
 @app.route('/api/unshorten', methods=['POST'])
 def unshorten():
-    # Получаем JSON данные из запроса
     data = request.get_json()
     if not data or 'url' not in data:
-        return jsonify({"status": "error", "message": "Введите URL"}), 400
+        return jsonify({"status": "error", "message": "URL не указан"}), 400
 
     url = data.get('url')
     
-    # Автоматически добавляем протокол, если пользователь его забыл
+    # Добавляем протокол, если его нет
     if not url.startswith(('http://', 'https://')):
         url = 'https://' + url
 
     try:
-        # Заголовки, чтобы выглядеть как обычный Chrome на Windows
+        # Заголовки, чтобы сайты не блокировали "бота"
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
         }
 
-        # Выполняем запрос с отслеживанием всех редиректов (allow_redirects=True)
-        # timeout=10 нужен, чтобы сервер не зависал на битых ссылках
+        # Выполняем запрос с отслеживанием редиректов
         response = requests.get(url, headers=headers, timeout=10, allow_redirects=True)
         
-        # Собираем историю всех прыжков (редиректов)
+        # Собираем историю всех перенаправлений
         history = [res.url for res in response.history]
-        history.append(response.url) # Добавляем финальную точку
+        history.append(response.url)
 
-        # Получаем данные о сайте для красивого отображения
+        # Получаем данные о финальной странице
         metadata = get_metadata(response)
 
         return jsonify({
@@ -81,5 +78,5 @@ def unshorten():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
-# Это критически важно для корректного деплоя на Vercel
+# Это критически важно для Vercel
 app = app
