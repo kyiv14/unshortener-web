@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Unshorten.it Clone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white flex items-center justify-center min-h-screen">
+    <div class="max-w-md w-full p-6 bg-slate-800 rounded-xl shadow-2xl">
+        <h1 class="text-3xl font-bold mb-6 text-center text-blue-400">Unshortener</h1>
+        <input id="urlInput" type="text" placeholder="Вставьте ссылку..." 
+               class="w-full p-3 rounded bg-slate-700 border-none mb-4 focus:ring-2 focus:ring-blue-500 outline-none">
+        <button onclick="unshorten()" id="btn" class="w-full bg-blue-600 p-3 rounded font-bold hover:bg-blue-500 transition">Проверить</button>
+        
+        <div id="loader" class="hidden mt-4 text-center text-blue-300">Расшифровываю...</div>
+        
+        <div id="result" class="mt-6 hidden p-4 bg-slate-700 rounded">
+            <p class="text-sm text-slate-400">Финальный адрес:</p>
+            <a id="finalUrl" target="_blank" class="text-blue-400 break-all font-medium underline"></a>
+            <p class="text-sm text-slate-400 mt-3">Заголовок страницы:</p>
+            <p id="siteTitle" class="italic text-slate-200"></p>
+        </div>
+    </div>
+
+    <script>
+        async function unshorten() {
+            const url = document.getElementById('urlInput').value;
+            const btn = document.getElementById('btn');
+            const loader = document.getElementById('loader');
+            const resultDiv = document.getElementById('result');
+
+            if(!url) return;
+
+            btn.disabled = true;
+            loader.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/unshorten', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ url })
+                });
+                const data = await response.json();
+                
+                document.getElementById('finalUrl').innerText = data.final_url;
+                document.getElementById('finalUrl').href = data.final_url;
+                document.getElementById('siteTitle').innerText = data.title;
+                resultDiv.classList.remove('hidden');
+            } catch (e) {
+                alert('Ошибка при проверке ссылки');
+            } finally {
+                btn.disabled = false;
+                loader.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
