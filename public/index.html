@@ -10,7 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dotlottie/1.27.0/dotlottie-player.mjs" type="module"></script>
+    
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 
     <style>
         body {
@@ -20,8 +21,8 @@
             -webkit-font-smoothing: antialiased;
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Центрирование по вертикали */
-            align-items: center;    /* Центрирование по горизонтали */
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
             margin: 0;
         }
@@ -31,26 +32,26 @@
             font-weight: 900;
             display: flex;
             align-items: center;
-            gap: 8px; /* Немного уменьшен отступ для компенсации размеров анимации */
+            gap: 5px;
             justify-content: center;
-            margin-bottom: 40px; /* Отступ логотипа от контента */
+            margin-bottom: 40px;
         }
         .logo-text span { color: #de2624; }
         
-        /* Стили для контейнера анимации */
         .logo-icon-container {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
         }
 
         .hero-title {
-            font-size: 40.8px; /* Уменьшено на 15% */
+            font-size: 40.8px;
             font-weight: 900;
             line-height: 1.1;
-            margin-bottom: 15px; /* Поднято выше */
+            margin-bottom: 15px;
             text-align: center;
             letter-spacing: -1px;
         }
@@ -61,7 +62,7 @@
             font-size: 19px;
             text-align: center;
             max-width: 500px;
-            margin: 0 auto 25px; /* Поднято ближе к карточке */
+            margin: 0 auto 25px;
             font-weight: 500;
         }
 
@@ -150,14 +151,14 @@
         
         <div class="logo-text">
             <div class="logo-icon-container">
-                <dotlottie-player 
+                <lottie-player 
                     src="wired-flat-11-link-unlink-hover-bounce.json" 
                     background="transparent" 
                     speed="1" 
-                    style="width: 80px; height: 80px;" 
-                    hover 
-                    loop>
-                </dotlottie-player>
+                    style="width: 100px; height: 100px;" 
+                    loop 
+                    autoplay>
+                </lottie-player>
             </div>
             Link <span>Unmask</span>
         </div>
@@ -211,7 +212,6 @@
             resultBox.style.display = 'none';
 
             try {
-                // Путь API с учетом твоего нового домена
                 const response = await fetch('/api/unshorten', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -231,8 +231,8 @@
                         const item = document.createElement('div');
                         item.className = 'redirect-item';
                         item.innerHTML = `
-                            <div class="redirect-dot"></div>
-                            <span class="truncate text-[12px] font-bold text-slate-500">${link}</span>
+                            <div class=\"redirect-dot\"></div>
+                            <span class=\"truncate text-[12px] font-bold text-slate-500\">${link}</span>
                         `;
                         chainBox.appendChild(item);
                     });
