@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Link Unmask — Раскрой тайну ссылки</title>
+    <title id="metaTitle">Link Unmask — Раскрой тайну ссылки</title>
+    
+    <meta name="description" id="metaDesc" content="Раскройте конечный адрес сокращенных ссылок. Безопасная проверка URL без переходов.">
+    <meta name="keywords" id="metaKeys" content="раскрыть ссылку, дешифратор url, проверка ссылок, bitly unshortener">
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 fill=%22%23de2624%22>🛡️</text></svg>">
 
@@ -21,10 +24,73 @@
             -webkit-font-smoothing: antialiased;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            padding-top: 20px;
+        }
+
+        .lang-trigger {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 1px solid rgba(0,0,0,0.08);
+            background: #ffffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            z-index: 1000;
+            font-size: 1.2rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 30px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .modal-title { font-weight: 800; margin-bottom: 25px; font-size: 1.5rem; }
+        
+        .lang-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+        }
+        .lang-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            border-radius: 15px;
+            background: #f4f4f7;
+            color: #1d1d1f;
+            font-weight: 700;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .lang-option:hover { background: #eaeaee; }
+        .lang-option.active { 
+            border-color: #de2624; 
+            background: #de2624; 
+            color: #ffffff; 
         }
 
         .logo-text {
@@ -34,7 +100,7 @@
             align-items: center;
             gap: 5px;
             justify-content: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
         .logo-text span { color: #de2624; }
         
@@ -44,7 +110,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
         }
 
         .hero-title {
@@ -83,14 +148,9 @@
             font-size: 17px;
             font-weight: 500;
             outline: none;
-            transition: all 0.3s ease;
             background: #ffffff;
             margin-bottom: 20px;
             text-align: center;
-        }
-        .input-field:focus { 
-            border-color: #1d1d1f;
-            box-shadow: 0 0 0 4px rgba(29, 29, 31, 0.05);
         }
 
         .btn-black {
@@ -101,18 +161,13 @@
             border-radius: 60px;
             font-weight: 800;
             font-size: 20px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
             cursor: pointer;
             border: none;
-        }
-        .btn-black:hover { 
-            background: #000000;
-            transform: translateY(-3px); 
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15); 
         }
 
         .result-card {
@@ -122,37 +177,34 @@
             border-radius: 30px;
             border: 2px solid #de2624;
             display: none;
-            animation: slideUp 0.5s ease-out;
-        }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .redirect-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 0;
-        }
-        .redirect-dot { 
-            width: 8px; 
-            height: 8px; 
-            background: #de2624; 
-            border-radius: 50%; 
-            flex-shrink: 0;
         }
     </style>
 </head>
 <body>
+
+    <button class="lang-trigger" onclick="openLangs()" id="currentFlag">🇷🇺</button>
+
+    <div class="modal" id="langModal" onclick="closeLangs()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-title" id="t-select-lang">Выберите язык</div>
+            <div class="lang-grid">
+                <div onclick="setLang('ru')" class="lang-option" id="l-ru"><span>🇷🇺</span> RU</div>
+                <div onclick="setLang('uk')" class="lang-option" id="l-uk"><span>🇺🇦</span> UK</div>
+                <div onclick="setLang('en')" class="lang-option" id="l-en"><span>🇺🇸</span> EN</div>
+                <div onclick="setLang('es')" class="lang-option" id="l-es"><span>🇪🇸</span> ES</div>
+                <div onclick="setLang('de')" class="lang-option" id="l-de"><span>🇩🇪</span> DE</div>
+                <div onclick="setLang('pl')" class="lang-option" id="l-pl"><span>🇵🇱</span> PL</div>
+                <div onclick="setLang('zh')" class="lang-option" id="l-zh"><span>🇨🇳</span> ZH</div>
+            </div>
+        </div>
+    </div>
 
     <div class="max-w-lg w-full px-6">
         
         <div class="logo-text">
             <div class="logo-icon-container">
                 <lottie-player 
-                    src="wired-flat-11-link-unlink-hover-bounce.json" 
+                    src="wired-flat-11-link-unlink-hover-bounce (1).json" 
                     background="transparent" 
                     speed="1" 
                     style="width: 100px; height: 100px;" 
@@ -163,11 +215,11 @@
             Link <span>Unmask</span>
         </div>
 
-        <h1 class="hero-title">Раскрой <span>тайну</span> ссылки</h1>
-        <p class="hero-sub">Безопасный просмотр сокращенных URL без риска для данных</p>
+        <h1 class="hero-title" id="t-h1">Раскрой <span>тайну</span> ссылки</h1>
+        <p class="hero-sub" id="t-sub">Безопасный просмотр сокращенных URL без риска для данных</p>
 
         <div class="main-card">
-            <input id="urlInput" type="text" placeholder="Вставьте ссылку (bit.ly, t.co...)" class="input-field">
+            <input id="urlInput" type="text" placeholder="..." class="input-field">
             
             <button onclick="unshorten()" id="btn" class="btn-black">
                 <span id="btnText">Раскрыть сейчас</span>
@@ -178,36 +230,103 @@
         <div id="result" class="result-card">
             <div class="flex items-center gap-3 mb-4">
                 <i class="fas fa-info-circle text-red-600"></i>
-                <h3 class="text-xs font-black uppercase tracking-widest text-red-600">Результат анализа:</h3>
+                <h3 class="text-xs font-black uppercase tracking-widest text-red-600" id="t-res-head">Результат анализа:</h3>
             </div>
             
             <div id="siteTitle" class="text-2xl font-black mb-2 text-slate-900 leading-tight"></div>
             
             <div class="bg-slate-50 p-4 rounded-2xl mb-6 border border-slate-100">
-                <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Конечная цель:</p>
-                <a id="finalUrl" href="#" target="_blank" class="text-blue-600 break-all text-sm font-bold underline decoration-2 underline-offset-4"></a>
+                <p class="text-[10px] font-bold text-slate-400 uppercase mb-2" id="t-res-target">Конечная цель:</p>
+                <a id="finalUrl" href="#" target="_blank" class="text-blue-600 break-all text-sm font-bold underline"></a>
             </div>
             
             <div class="pt-5 border-t border-slate-100">
-                <p class="text-[10px] font-bold text-slate-400 uppercase mb-4 tracking-widest">Цепочка переходов:</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase mb-4 tracking-widest" id="t-res-chain">Цепочка переходов:</p>
                 <div id="redirectChain" class="space-y-1"></div>
             </div>
         </div>
     </div>
 
     <script>
+        const langs = {
+            ru: { 
+                flag: '🇷🇺', select: 'Выберите язык', h1: 'Раскрой <span>тайну</span> ссылки', sub: 'Безопасный просмотр сокращенных URL без риска для данных', ph: 'Вставьте ссылку (bit.ly, t.co...)', btn: 'Раскрыть сейчас', loading: 'Раскрываем...', res: 'Результат анализа:', target: 'Конечная цель:', chain: 'Цепочка переходов:', err: 'Ошибка сервера',
+                desc: 'Раскройте конечный адрес сокращенных ссылок. Безопасная проверка URL без переходов.', keys: 'раскрыть ссылку, дешифратор url, проверка ссылок, bitly unshortener'
+            },
+            uk: { 
+                flag: '🇺🇦', select: 'Виберіть мову', h1: 'Розкрий <span>таємницю</span> посилання', sub: 'Безпечний перегляд скорочених URL без ризику для даних', ph: 'Вставте посилання (bit.ly, t.co...)', btn: 'Розкрити зараз', loading: 'Розкриваємо...', res: 'Результат аналізу:', target: 'Кінцева мета:', chain: 'Ланцюжок переходів:', err: 'Помилка сервера',
+                desc: 'Розкрийте кінцеву адресу скорочених посилань. Безпечна перевірка URL без переходів.', keys: 'розкрити посилання, дешифратор url, перевірка посилань, скорочені посилання'
+            },
+            en: { 
+                flag: '🇺🇸', select: 'Select language', h1: 'Reveal the <span>link</span> mystery', sub: 'Safe browsing of shortened URLs without data risk', ph: 'Paste link (bit.ly, t.co...)', btn: 'Unmask now', loading: 'Unmasking...', res: 'Analysis result:', target: 'Final destination:', chain: 'Redirect chain:', err: 'Server Error',
+                desc: 'Reveal the final destination of shortened links. Safe URL checker without clicking.', keys: 'unshorten link, url decoder, check link safety, bitly expander'
+            },
+            es: { 
+                flag: '🇪🇸', select: 'Seleccionar idioma', h1: 'Revela el <span>misterio</span> del link', sub: 'Navegación segura por URLs acortadas sin riesgo', ph: 'Pegar enlace (bit.ly, t.co...)', btn: 'Revelar ahora', loading: 'Revelando...', res: 'Resultado del análisis:', target: 'Destino final:', chain: 'Cadena de redirección:', err: 'Error del servidor',
+                desc: 'Revela el destino final de los enlaces acortados. Verificador de URL seguro sin clics.', keys: 'desacortar link, decodificador url, verificar link, expansor de enlaces'
+            },
+            de: { 
+                flag: '🇩🇪', select: 'Sprache wählen', h1: 'Link-<span>Geheimnis</span> enthüllen', sub: 'Sicheres Browsen von gekürzten URLs ohne Risiko', ph: 'Link einfügen (bit.ly, t.co...)', btn: 'Jetzt enthüllen', loading: 'Enthüllung...', res: 'Analyseergebnis:', target: 'Endziel:', chain: 'Weiterleitungskette:', err: 'Serverfehler',
+                desc: 'Enthüllen Sie das Ziel gekürzter Links. Sicherer URL-Checker ohne Klicken.', keys: 'link enthüllen, url decoder, link prüfen, bitly unshortener deutsch'
+            },
+            pl: { 
+                flag: '🇵🇱', select: 'Wybierz język', h1: 'Odkryj <span>tajemnicę</span> linku', sub: 'Bezpieczne przeglądanie skróconych adresów URL', ph: 'Wklej link (bit.ly, t.co...)', btn: 'Odkryj teraz', loading: 'Odkrywanie...', res: 'Wynik analizy:', target: 'Cel końcowy:', chain: 'Łańcuch przekierowań:', err: 'Błąd serwera',
+                desc: 'Odkryj ostateczny cel skróconych linków. Bezpieczne sprawdzanie adresów URL.', keys: 'odkryj link, dekoder url, sprawdź link, skracanie linków'
+            },
+            zh: { 
+                flag: '🇨🇳', select: '选择语言', h1: '揭开<span>链接</span>谜团', sub: '安全浏览缩短的 URL，无数据风险', ph: '粘贴链接 (bit.ly, t.co...)', btn: '立即揭开', loading: '揭开中...', res: '分析结果:', target: '最终目的地:', chain: '重定向链:', err: '服务器错误',
+                desc: '揭开缩短链接的最终目的地。无需点击的安全 URL 检查器。', keys: '还原链接, url 解码, 检查链接安全, 缩短链接还原'
+            }
+        };
+
+        let cur = localStorage.getItem('unmask_lang') || 'ru';
+
+        function openLangs() { document.getElementById('langModal').style.display = 'flex'; }
+        function closeLangs() { document.getElementById('langModal').style.display = 'none'; }
+
+        function setLang(code) {
+            cur = code;
+            localStorage.setItem('unmask_lang', code);
+            updateUI();
+            closeLangs();
+        }
+
+        function updateUI() {
+            const t = langs[cur];
+            document.title = (t.flag + ' ' + t.h1).replace('<span>', '').replace('</span>', '');
+            document.getElementById('currentFlag').innerText = t.flag;
+            document.getElementById('t-select-lang').innerText = t.select;
+            document.getElementById('t-h1').innerHTML = t.h1;
+            document.getElementById('t-sub').innerText = t.sub;
+            document.getElementById('urlInput').placeholder = t.ph;
+            document.getElementById('btnText').innerText = t.btn;
+            document.getElementById('t-res-head').innerText = t.res;
+            document.getElementById('t-res-target').innerText = t.target;
+            document.getElementById('t-res-chain').innerText = t.chain;
+            
+            // SEO Обновление
+            document.getElementById('metaDesc').content = t.desc;
+            document.getElementById('metaKeys').content = t.keys;
+            
+            document.querySelectorAll('.lang-option').forEach(el => el.classList.remove('active'));
+            document.getElementById('l-' + cur).classList.add('active');
+        }
+
+        updateUI();
+
         async function unshorten() {
             const input = document.getElementById('urlInput');
             const btn = document.getElementById('btn');
             const btnText = document.getElementById('btnText');
             const loader = document.getElementById('loader');
             const resultBox = document.getElementById('result');
+            const t = langs[cur];
             
             const rawUrl = input.value.trim();
             if (!rawUrl) return;
 
             btn.disabled = true;
-            btnText.innerText = "Раскрываем...";
+            btnText.innerText = t.loading;
             loader.classList.remove('hidden');
             resultBox.style.display = 'none';
 
@@ -221,31 +340,29 @@
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    document.getElementById('siteTitle').innerText = data.metadata.title || "Заголовок не найден";
+                    document.getElementById('siteTitle').innerText = data.metadata.title || "---";
                     document.getElementById('finalUrl').innerText = data.final_url;
                     document.getElementById('finalUrl').href = data.final_url;
                     
                     const chainBox = document.getElementById('redirectChain');
                     chainBox.innerHTML = '';
                     data.chain.forEach((link) => {
-                        const item = document.createElement('div');
-                        item.className = 'redirect-item';
-                        item.innerHTML = `
-                            <div class=\"redirect-dot\"></div>
-                            <span class=\"truncate text-[12px] font-bold text-slate-500\">${link}</span>
-                        `;
-                        chainBox.appendChild(item);
+                        chainBox.innerHTML += `
+                            <div class="flex items-center gap-3 py-1">
+                                <div class="w-2 h-2 bg-red-600 rounded-full flex-shrink-0"></div>
+                                <span class="truncate text-[12px] font-bold text-slate-500">${link}</span>
+                            </div>`;
                     });
 
                     resultBox.style.display = 'block';
                 } else {
-                    alert("Ошибка: " + (data.message || "Не удалось проверить ссылку"));
+                    alert(t.err + ": " + (data.message || "---"));
                 }
             } catch (e) {
-                alert("Ошибка соединения с сервером");
+                alert(t.err);
             } finally {
                 btn.disabled = false;
-                btnText.innerText = "Раскрыть сейчас";
+                btnText.innerText = t.btn;
                 loader.classList.add('hidden');
             }
         }
