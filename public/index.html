@@ -30,6 +30,7 @@
             padding-top: 20px;
         }
 
+        /* Кнопка выбора языка */
         .lang-trigger {
             position: fixed;
             top: 25px;
@@ -46,8 +47,11 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             z-index: 1000;
             font-size: 1.2rem;
+            transition: transform 0.2s;
         }
+        .lang-trigger:hover { transform: scale(1.1); }
 
+        /* Модальное окно */
         .modal {
             display: none;
             position: fixed;
@@ -65,6 +69,7 @@
             width: 90%;
             max-width: 400px;
             text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
         }
         .modal-title { font-weight: 800; margin-bottom: 25px; font-size: 1.5rem; }
         
@@ -105,8 +110,8 @@
         .logo-text span { color: #de2624; }
         
         .logo-icon-container {
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -151,7 +156,9 @@
             background: #ffffff;
             margin-bottom: 20px;
             text-align: center;
+            transition: border-color 0.3s;
         }
+        .input-field:focus { border-color: #de2624; }
 
         .btn-black {
             background: #1d1d1f;
@@ -169,6 +176,7 @@
             cursor: pointer;
             border: none;
         }
+        .btn-black:hover { transform: translateY(-2px); background: #000; }
 
         .result-card {
             margin-top: 30px;
@@ -177,7 +185,9 @@
             border-radius: 30px;
             border: 2px solid #de2624;
             display: none;
+            animation: fadeIn 0.4s ease;
         }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -204,7 +214,7 @@
         <div class="logo-text">
             <div class="logo-icon-container">
                 <lottie-player 
-                    src="wired-flat-11-link-unlink-hover-bounce (1).json" 
+                    src="icon.json" 
                     background="transparent" 
                     speed="1" 
                     style="width: 100px; height: 100px;" 
@@ -275,7 +285,7 @@
             },
             zh: { 
                 flag: '🇨🇳', select: '选择语言', h1: '揭开<span>链接</span>谜团', sub: '安全浏览缩短的 URL，无数据风险', ph: '粘贴链接 (bit.ly, t.co...)', btn: '立即揭开', loading: '揭开中...', res: '分析结果:', target: '最终目的地:', chain: '重定向链:', err: '服务器错误',
-                desc: '揭开缩短链接的最终目的地。无需点击的安全 URL 检查器。', keys: '还原链接, url 解码, 检查链接安全, 缩短链接还原'
+                desc: '揭开缩短链接的最终目的地。无需点击的安全 URL 检查器。', keys: '还原链接, url 解码, 检查链接安全, 还原链接工具'
             }
         };
 
@@ -293,7 +303,7 @@
 
         function updateUI() {
             const t = langs[cur];
-            document.title = (t.flag + ' ' + t.h1).replace('<span>', '').replace('</span>', '');
+            // Обновление текстов
             document.getElementById('currentFlag').innerText = t.flag;
             document.getElementById('t-select-lang').innerText = t.select;
             document.getElementById('t-h1').innerHTML = t.h1;
@@ -305,13 +315,16 @@
             document.getElementById('t-res-chain').innerText = t.chain;
             
             // SEO Обновление
+            document.title = "Link Unmask — " + t.h1.replace('<span>', '').replace('</span>', '');
             document.getElementById('metaDesc').content = t.desc;
             document.getElementById('metaKeys').content = t.keys;
             
+            // Подсветка активного языка
             document.querySelectorAll('.lang-option').forEach(el => el.classList.remove('active'));
             document.getElementById('l-' + cur).classList.add('active');
         }
 
+        // Инициализация интерфейса
         updateUI();
 
         async function unshorten() {
