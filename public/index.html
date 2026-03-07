@@ -13,8 +13,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 
     <style>
         body {
@@ -99,23 +97,15 @@
         }
 
         .logo-text {
-            font-size: 32px;
+            font-size: 38px;
             font-weight: 900;
             display: flex;
             align-items: center;
-            gap: 5px;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            letter-spacing: -1.5px;
         }
         .logo-text span { color: #de2624; }
-        
-        .logo-icon-container {
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
 
         .hero-title {
             font-size: 40.8px;
@@ -212,16 +202,6 @@
     <div class="max-w-lg w-full px-6">
         
         <div class="logo-text">
-            <div class="logo-icon-container">
-                <lottie-player 
-                    src="icon.json" 
-                    background="transparent" 
-                    speed="1" 
-                    style="width: 100px; height: 100px;" 
-                    loop 
-                    autoplay>
-                </lottie-player>
-            </div>
             Link <span>Unmask</span>
         </div>
 
@@ -281,7 +261,7 @@
             },
             pl: { 
                 flag: '🇵🇱', select: 'Wybierz język', h1: 'Odkryj <span>tajemnicę</span> linku', sub: 'Bezpieczne przeglądanie skróconych adresów URL', ph: 'Wklej link (bit.ly, t.co...)', btn: 'Odkryj teraz', loading: 'Odkrywanie...', res: 'Wynik analizy:', target: 'Cel końcowy:', chain: 'Łańcuch przekierowań:', err: 'Błąd serwera',
-                desc: 'Odkryj ostateczny cel skróconych linków. Bezpieczne sprawdzanie adresów URL.', keys: 'odkryj link, dekoder url, sprawdź link, skracanie linków'
+                desc: 'Odkryj ostateczny cel skróconych linków. Bezpieczne sprawdzanie adresów URL.', keys: 'odkryj link, dekoder url, sprawdź link, skracanie linkів'
             },
             zh: { 
                 flag: '🇨🇳', select: '选择语言', h1: '揭开<span>链接</span>谜团', sub: '安全浏览缩短的 URL，无数据风险', ph: '粘贴链接 (bit.ly, t.co...)', btn: '立即揭开', loading: '揭开中...', res: '分析结果:', target: '最终目的地:', chain: '重定向链:', err: '服务器错误',
@@ -324,7 +304,6 @@
             document.getElementById('l-' + cur).classList.add('active');
         }
 
-        // Инициализация интерфейса
         updateUI();
 
         async function unshorten() {
