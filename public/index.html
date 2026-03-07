@@ -27,10 +27,11 @@
             padding-top: 20px;
         }
 
+        /* Кнопка выбора языка перенесена в правый верхний угол */
         .lang-trigger {
             position: fixed;
             top: 25px;
-            left: 25px;
+            right: 25px;
             width: 45px;
             height: 45px;
             border-radius: 50%;
@@ -219,7 +220,7 @@
             en: { flag: '🇺🇸', select: 'Select language', h1: 'Reveal the <span>link</span> mystery', sub: 'Safe browsing of shortened URLs without data risk', ph: 'Paste link (bit.ly, t.co...)', btn: 'Unmask now', loading: 'Unmasking...', res: 'Analysis result:', target: 'Final destination:', chain: 'Redirect chain:', err: 'Server Error', no_title: 'Title not found', desc: 'Reveal final destination of shortened links.', keys: 'unshorten link, check url' },
             es: { flag: '🇪🇸', select: 'Seleccionar idioma', h1: 'Revela el <span>misterio</span> del link', sub: 'Navegación segura por URLs acortadas', ph: 'Pegar enlace...', btn: 'Revelar ahora', loading: 'Revelando...', res: 'Resultado:', target: 'Destino final:', chain: 'Redirección:', err: 'Error', no_title: 'Título no encontrado', desc: 'Revela el destino de los enlaces.', keys: 'desacortar link' },
             de: { flag: '🇩🇪', select: 'Sprache wählen', h1: 'Link-<span>Geheimnis</span> enthüllen', sub: 'Sicheres Browsen von URLs', ph: 'Link einfügen...', btn: 'Jetzt enthüllen', loading: 'Enthüllung...', res: 'Ergebnis:', target: 'Endziel:', chain: 'Kette:', err: 'Fehler', no_title: 'Titel nicht gefunden', desc: 'Ziel gekürzter Links enthüllen.', keys: 'link prüfen' },
-            pl: { flag: '🇵🇱', select: 'Wybierz język', h1: 'Odkryj <span>tajemnicę</span> linku', sub: 'Bezpieczne przeglądanie skróconych adresów', ph: 'Wklej link...', btn: 'Odkryj teraz', loading: 'Odkrywanie...', res: 'Wynik:', target: 'Cel końcowy:', chain: 'Łańcuch:', err: 'Błąd', no_title: 'Nie znaleziono tytułu', desc: 'Odkryj cel skróconych linków.', keys: 'sprawdź link' },
+            pl: { flag: '🇵🇱', select: 'Wybierz język', h1: 'Odkryj <span>tajemnicę</span> linku', sub: 'Bezpieczne przeglądanie skróconych adresów', ph: 'Wklej link...', btn: 'Wybierz teraz', loading: 'Odkrywanie...', res: 'Wynik:', target: 'Cel końcowy:', chain: 'Łańcuch:', err: 'Błąd', no_title: 'Nie znaleziono tytułu', desc: 'Odkryj cel skróconych linków.', keys: 'sprawdź link' },
             zh: { flag: '🇨🇳', select: '选择语言', h1: '揭开<span>链接</span>谜团', sub: '安全浏览缩短的 URL', ph: '粘贴链接...', btn: '立即揭开', loading: '揭开中...', res: '分析结果:', target: '最终目的地:', chain: '重定向链:', err: '服务器错误', no_title: '未找到标题', desc: '揭开缩短链接的最终目的地。', keys: '还原链接' }
         };
 
@@ -281,7 +282,6 @@
                 const data = await response.json();
 
                 if (data.status === 'success') {
-                    // Логика перевода заголовка, если он не найден
                     let displayTitle = data.metadata.title;
                     if (!displayTitle || displayTitle === "Заголовок не найден" || displayTitle === "N/A") {
                         displayTitle = t.no_title;
